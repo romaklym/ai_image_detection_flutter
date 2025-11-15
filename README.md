@@ -13,7 +13,7 @@ A complete solution for detecting AI-generated vs human-created images, featurin
 
 ## 🏗️ Architecture
 
-- **Frontend**: Flutter mobile app (`ai_detector/`)
+- **Frontend**: Flutter mobile app (`ai_image_detection_flutter/`)
 - **Backend**: Python FastAPI server (`server.py`)
 - **Model**: `Ateeqq/ai-vs-human-image-detector` from Hugging Face
 - **Communication**: REST API with multipart file upload
@@ -72,7 +72,7 @@ Replace `192.168.1.100` with your actual IP address. Keep this terminal running.
 
 Update the endpoint in the Flutter app:
 
-1. Open `ai_detector/lib/main.dart`
+1. Open `ai_image_detection_flutter/lib/main.dart`
 2. Find the `_endpoint` variable (around line 71)
 3. Update it with your IP address:
 
@@ -82,10 +82,10 @@ final String _endpoint = 'http://192.168.1.100:8000/classify';
 
 ### 5. Run the Flutter App
 
-From the `ai_detector/` directory:
+From the `ai_image_detection_flutter/` directory:
 
 ```bash
-cd ai_detector
+cd ai_image_detection_flutter
 flutter pub get
 flutter run
 ```
@@ -101,7 +101,7 @@ flutter run
 
 ```
 ai-vs-human-image-detector/
-├── ai_detector/                 # Flutter mobile app
+├── ai_image_detection_flutter/  # Flutter mobile app
 │   ├── lib/
 │   │   └── main.dart           # Main Flutter application
 │   ├── pubspec.yaml            # Flutter dependencies
@@ -154,7 +154,7 @@ The FastAPI server (`server.py`) handles:
 
 ### Frontend Development
 
-The Flutter app (`ai_detector/`) features:
+The Flutter app (`ai_image_detection_flutter/`) features:
 - Material Design 3 theming
 - Professional color scheme and typography
 - Responsive layout with proper spacing
@@ -164,22 +164,22 @@ The Flutter app (`ai_detector/`) features:
 ### Adding New Features
 
 1. **Backend Changes**: Modify `server.py`
-2. **Frontend Changes**: Update `ai_detector/lib/main.dart`
+2. **Frontend Changes**: Update `ai_image_detection_flutter/lib/main.dart`
 3. **Dependencies**: 
    - Python: Install via pip
-   - Flutter: Add to `ai_detector/pubspec.yaml`
+   - Flutter: Add to `ai_image_detection_flutter/pubspec.yaml`
 
 ## 🚀 Building for Production
 
 ### Android
 ```bash
-cd ai_detector
+cd ai_image_detection_flutter
 flutter build apk --release
 ```
 
 ### iOS
 ```bash
-cd ai_detector
+cd ai_image_detection_flutter
 flutter build ios --release
 ```
 
