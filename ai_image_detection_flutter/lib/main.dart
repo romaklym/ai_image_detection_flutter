@@ -238,56 +238,62 @@ class _AiDetectorPageState extends State<AiDetectorPage> {
   }
 
   Widget _buildImageAnalysis() {
-    return Column(
+    return Stack(
       children: [
         // Image display
-        Expanded(
-          flex: 3,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.file(
-                _imageFile!,
-                fit: BoxFit.cover,
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.file(
+              _imageFile!,
+              fit: BoxFit.cover,
             ),
           ),
         ),
-        const SizedBox(height: 24),
         
-        // Analysis results
-        Expanded(
-          flex: 1,
-          child: _buildResults(),
-        ),
+        // Analysis results overlay
+        if (_isLoading || _error != null || _label != null)
+          Positioned(
+            bottom: 16,
+            left: 16,
+            right: 16,
+            child: _buildResults(),
+          ),
       ],
     );
   }
 
   Widget _buildResults() {
     if (_isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
+            CircularProgressIndicator(color: Colors.white),
+            SizedBox(height: 12),
             Text(
               'Analyzing image...',
               style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF64748B),
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -297,37 +303,38 @@ class _AiDetectorPageState extends State<AiDetectorPage> {
 
     if (_error != null) {
       return Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFFEF2F2),
+          color: const Color(0xFFDC2626).withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFFECACA)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(
               Icons.error_outline,
-              color: Color(0xFFDC2626),
-              size: 32,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Analysis Failed',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFDC2626),
-              ),
+              color: Colors.white,
+              size: 24,
             ),
             const SizedBox(height: 8),
+            const Text(
+              'Analysis Failed',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 4),
             Text(
               _error!,
               style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFF991B1B),
+                fontSize: 12,
+                color: Colors.white,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -339,49 +346,56 @@ class _AiDetectorPageState extends State<AiDetectorPage> {
       final confidence = (_confidence ?? 0) * 100;
       
       return Container(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: Colors.white.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
+              color: Colors.black.withValues(alpha: 0.2),
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: isHuman ? const Color(0xFFDCFCE7) : const Color(0xFFFEF2F2),
-                borderRadius: BorderRadius.circular(32),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
                 isHuman ? Icons.person : Icons.smart_toy,
-                size: 32,
+                size: 20,
                 color: isHuman ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              isHuman ? 'Human Created' : 'AI Generated',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isHuman ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${confidence.toStringAsFixed(1)}% confidence',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Color(0xFF64748B),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isHuman ? 'Human Created' : 'AI Generated',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isHuman ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
+                    ),
+                  ),
+                  Text(
+                    '${confidence.toStringAsFixed(1)}% confidence',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
